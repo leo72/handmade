@@ -1,6 +1,6 @@
 <?php
 // DIR
-define('DIR_APPLICATION', 'C:\wamp\www\handmade/catalog/');
+define('DIR_APPLICATION', 'C:\wamp\www\handmade/catalog/fff');
 define('DIR_SYSTEM', 'C:\wamp\www\handmade/system/');
 define('DIR_DATABASE', 'C:\wamp\www\handmade/system/database/');
 define('DIR_LANGUAGE', 'C:\wamp\www\handmade/catalog/language/');
