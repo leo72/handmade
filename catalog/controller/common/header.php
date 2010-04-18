@@ -1,11 +1,11 @@
 <?php   
 class ControllerCommonHeader extends Controller {
 	protected function index() {
-    	if (($this->request->server['REQUEST_METHOD'] == 'POST') && isset($this->request->post['language_code'])) {
-			$this->session->data['language'] = $this->request->post['language_code'];
-		
-			if (isset($this->request->post['redirect'])) {
-				$this->redirect($this->request->post['redirect']);
+    	if (isset($this->request->get['language_code'])) {
+			$this->session->data['language'] = $this->request->get['language_code'];
+			
+			if (isset($this->request->get['redirect'])) {
+				$this->redirect($this->request->get['redirect']);
 			} else {
 				$this->redirect(HTTP_SERVER . 'index.php?route=common/home');
 			}
