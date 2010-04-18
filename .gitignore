@@ -1,4 +1,4 @@
 
 /config.php
-/image/cache/data/*.jpg
+/image/cache/data
 /system/cache
