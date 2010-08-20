@@ -1,4 +1,4 @@
-<div class="box">
+<div id="module_bestseller" class="box">
   <div class="top"><img src="catalog/view/theme/default/image/bestsellers.png" alt="" /><?php echo $heading_title; ?></div>
   <div class="middle">
     <?php if ($products) { ?>

@@ -1,0 +1,6 @@
+2010-04-18 16:12:55 - PHP Notice:  Undefined index: language_code in C:\wamp\www\handmade\catalog\controller\common\header.php on line 5
+2010-04-18 16:13:11 - PHP Notice:  Undefined index: language_code in C:\wamp\www\handmade\catalog\controller\common\header.php on line 5
+2010-04-18 16:52:13 - PHP Notice:  Undefined variable: language in C:\wamp\www\handmade\catalog\view\theme\default\template\common\header.tpl on line 126
+2010-04-18 16:52:13 - PHP Notice:  Undefined variable: language in C:\wamp\www\handmade\catalog\view\theme\default\template\common\header.tpl on line 126
+2010-04-18 16:52:13 - PHP Notice:  Undefined variable: language in C:\wamp\www\handmade\catalog\view\theme\default\template\common\header.tpl on line 126
+2010-04-18 16:52:13 - PHP Notice:  Undefined variable: language in C:\wamp\www\handmade\catalog\view\theme\default\template\common\header.tpl on line 126
