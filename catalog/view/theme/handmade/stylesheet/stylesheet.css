@@ -54,11 +54,18 @@ p {
 	padding-top: 3px;
 	padding-left: 1px;
 }
+#header .top_banner {
+	position:absolute;
+	padding-top: 10px;
+	padding-left: 160px;
+	height: 60px;
+}
 #header .div3 {
-	float: right;
-	padding-top: 7px;
-	height: 38px;
-	margin-right: 20px;
+	float:right;
+	height:23px;
+	margin-right:20px;
+	margin-top:15px;
+	padding-top:2px;
 }
 #header .div3 a {
 	margin-left: 15px;
@@ -614,4 +621,12 @@ p {
 }
 .cart td {
 	padding: 5px;
+}
+.brand-info{
+	margin-bottom:15px;
+	min-height:120px;
+}
+.brand-info img{
+	margin-right: 15px;
+	margin-bottom: 10px;
 }

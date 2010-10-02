@@ -13,11 +13,13 @@ $_['column_sort_order']  = 'Sort Order';
 $_['column_action']      = 'Action';
 
 // Entry
-$_['entry_name']         = 'Manufacturer Name:';
-$_['entry_store']        = 'Stores:';
-$_['entry_keyword']      = 'SEO Keyword:';
-$_['entry_image']        = 'Image:';
-$_['entry_sort_order']   = 'Sort Order:';
+$_['entry_name']        	= 'Manufacturer Name:';
+$_['entry_meta_description']= 'Meta Tag Description:';
+$_['entry_description']     = 'Description:';
+$_['entry_store']        	= 'Stores:';
+$_['entry_keyword']      	= 'SEO Keyword:';
+$_['entry_image']        	= 'Image:';
+$_['entry_sort_order']   	= 'Sort Order:';
 
 // Error
 $_['error_permission']   = 'Warning: You do not have permission to modify manufacturers!';

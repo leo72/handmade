@@ -56,6 +56,32 @@ function bookmark(url, title) {
       <a href="<?php echo str_replace('&', '&amp;', $home); ?>"><img src="<?php echo $logo; ?>" title="<?php echo $store; ?>" alt="<?php echo $store; ?>" /></a>
       <?php } ?>
     </div>
+    <div class="top_banner">
+	    <!-- govazd.am - BannerCodeStart -->
+		<p align="center">
+		<script LANGUAGE="JavaScript" type="text/javascript">
+		<!--
+		random = parseInt(Math.random()*10000)
+		banner = '<iframe src="http://www.govazd.am/cgi-bin/lite.cgi?'
+		banner += '11086;'+random+';1;" frameborder=0 width=468 height=60 marginwidth=0 marginheight=0 scrolling=no>'
+		banner += '<A href="http://www.govazd.am/lite/go.php?'
+		banner += 'id=11086&amp;amp;pg='+escape(window.location.href)+'-'+random+'"><IMG alt="govazd.am" title="govazd.am" border=0 '
+		banner += 'width=468 height=60 src="http://www.govazd.am/cgi-bin/lite.cgi?'
+		banner += '11086;'+escape(window.location.href)+'-'+random+';0;"></A></iframe>'
+		document.write(banner)
+		// -->
+		</script> 
+		</p>
+		<NOSCRIPT>
+		<p align="center">
+			<IFRAME src="http://www.govazd.am/cgi-bin/lite.cgi?11086;1;1;" frameborder="0" width="468"   height="60" marginwidth="0" marginheight="0" scrolling="no"><a
+			 href="http://www.govazd.am/lite/go.php?id=11086&amp;pg=1"><img
+			 alt="govazd.am" border="0" width="468" height="60" 
+			 src="http://www.govazd.am/cgi-bin/lite.cgi?11086;1;0;"></a></IFRAME>
+		</p>
+		</NOSCRIPT>
+		<!-- govazd.am - BannerCodeEnd -->		
+    </div>
     <div class="div3"><a href="<?php echo str_replace('&', '&amp;', $special); ?>" style="background-image: url('catalog/view/theme/handmade/image/special.png');"><?php echo $text_special; ?></a><a onclick="bookmark(document.location, '<?php echo addslashes($title); ?>');" style="background-image: url('catalog/view/theme/handmade/image/bookmark.png');"><?php echo $text_bookmark; ?></a><a href="<?php echo str_replace('&', '&amp;', $contact); ?>" style="background-image: url('catalog/view/theme/handmade/image/contact.png');"><?php echo $text_contact; ?></a><a href="<?php echo str_replace('&', '&amp;', $sitemap); ?>" style="background-image: url('catalog/view/theme/handmade/image/sitemap.png');"><?php echo $text_sitemap; ?></a></div>
     <div class="div4"><a href="<?php echo str_replace('&', '&amp;', $home); ?>" id="tab_home"><?php echo $text_home; ?></a>
       <?php if (!$logged) { ?>
@@ -124,7 +150,7 @@ function bookmark(url, title) {
 			<div class="switcher">
 			<?php foreach ($languages as $language) { ?>
 				<div style="float: left;">
-					<a href="<?=str_replace('&', '&amp;', $action); ?>&language_code=<?=$language['code']; ?>&redirect=<?=rawurlencode($redirect);?>">
+					<a href=lang_<?=$language['code']; ?>.html>
 					<img src="image/flags/<?php echo $language['image']; ?>" alt="<?php echo $language['name']; ?>" title="<?php echo $language['name']; ?>"/>&nbsp;&nbsp;
 					</a>
 				</div>

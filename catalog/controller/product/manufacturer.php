@@ -30,12 +30,20 @@ class ControllerProductManufacturer extends Controller {
         		'text'      => $manufacturer_info['name'],
         		'separator' => $this->language->get('text_separator')
       		);
+      		
+      		$this->document->description = $manufacturer_info['meta_description'];			
 					  		
 			$this->document->title = $manufacturer_info['name'];
+			
+			$this->data['description'] = html_entity_decode($manufacturer_info['description'], ENT_QUOTES, 'UTF-8');
 									
 			$this->data['heading_title'] = $manufacturer_info['name'];
+			
+			$this->data['manufacturer_name'] = $manufacturer_info['name'];
 
 			$this->data['text_sort'] = $this->language->get('text_sort');
+			
+			$this->data['thumb'] = $this->model_tool_image->resize($manufacturer_info["image"], $this->config->get('config_image_category_width'), $this->config->get('config_image_category_height'));
 		
 			$product_total = $this->model_catalog_product->getTotalProductsByManufacturerId($this->request->get['manufacturer_id']);
 			
