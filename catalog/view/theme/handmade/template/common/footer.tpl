@@ -11,6 +11,10 @@
 	<a href="http://top.hayastan.com/index.php?act=stats&amp;id=2126" target="_blank"><img src="http://top.hayastan.com/index.php?act=hit&amp;site=2126" border="0" alt="HTML Hit Tracker" /></a>
 	<!-- top.hayastan.com: End -->
 	
+	<!-- Yerevan-City.Com: DO NOT MODIFY THIS CODE: Start -->
+	<a href="http://www.yerevan-city.com/counter/info.php?id=10428"><img src="http://www.yerevan-city.com/counter/counter.php?id=10428" width="88" height="31" border="0" alt="Каталог Yerevan-city.com"></a>
+	<!-- Yerevan-City.Com: End --> 
+	
   </div>
   <!-- 
 OpenCart is open source software and you are free to remove the Powered By OpenCart if you want, but its generally accepted practise to make a small donatation.
