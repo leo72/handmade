@@ -1,0 +1,19 @@
+php_flag magic_quotes_gpc off       
+
+Options +FollowSymlinks      
+
+RewriteEngine On
+
+RewriteBase /
+
+#RewriteCond %{HTTP_HOST} !^www.hand-made.am$ [NC]
+#RewriteRule ^(.*)$ http://www.hand-made.am/$1 [L,R=301] 
+
+RewriteRule lang_(.*).html index.php?language=$1 [L,QSA]
+
+
+RewriteCond %{REQUEST_FILENAME} !-f
+
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^(.*)\?*$ index.php?_route_=$1 [L,QSA]
