@@ -2,6 +2,8 @@
 /config.php
 /image/cache/data
 /system/cache
+/system/logs/error.log
+/system/logs/error.txt
 /.project
 /.settings
 /.buildpath
