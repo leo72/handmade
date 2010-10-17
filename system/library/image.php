@@ -39,7 +39,7 @@ final class Image {
         $info = pathinfo($file);
         $extension = $info['extension'];
    
-        if ($extension == ('jpeg' || 'jpg')) {
+        if ($extension == 'jpeg' || $extension == 'jpg') {
             imagejpeg($this->image, $file, $quality);
         } elseif($extension == 'png') {
             imagepng($this->image, $file, 0);
@@ -71,9 +71,17 @@ final class Image {
         		        
        	$image_old = $this->image;
         $this->image = imagecreatetruecolor($width, $height);
-			
-		$background = imagecolorallocate($this->image, 255, 255, 255);
-    	imagefilledrectangle($this->image, 0, 0, $width, $height, $background);
+		
+		if (isset($this->info['mime']) && $this->info['mime'] == 'image/png') {		
+			imagealphablending($this->image, false);
+			imagesavealpha($this->image, true);
+			$background = imagecolorallocatealpha($this->image, 255, 255, 255, 127);
+			imagecolortransparent($this->image, $background);
+		} else {
+			$background = imagecolorallocate($this->image, 255, 255, 255);
+		}
+		
+		imagefilledrectangle($this->image, 0, 0, $width, $height, $background);
 	
         imagecopyresampled($this->image, $image_old, $xpos, $ypos, 0, 0, $new_width, $new_height, $this->info['width'], $this->info['height']);
         imagedestroy($image_old);
