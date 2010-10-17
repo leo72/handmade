@@ -4,7 +4,7 @@ Options +FollowSymlinks
 
 RewriteEngine On
 
-RewriteBase /
+RewriteBase /handmade/
 
 #RewriteCond %{HTTP_HOST} !^www.hand-made.am$ [NC]
 #RewriteRule ^(.*)$ http://www.hand-made.am/$1 [L,R=301] 

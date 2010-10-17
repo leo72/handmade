@@ -26,6 +26,6 @@ define('DB_DRIVER', 'mysql');
 define('DB_HOSTNAME', 'localhost');
 define('DB_USERNAME', 'handmade');
 define('DB_PASSWORD', 'asdfqwer');
-define('DB_DATABASE', 'handmade');
+define('DB_DATABASE', 'handmade_online');
 define('DB_PREFIX', '');
 ?>
