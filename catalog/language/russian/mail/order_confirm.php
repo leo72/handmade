@@ -12,12 +12,15 @@ $_['text_shipping_method']  = 'Способ доставки:';
 $_['text_payment_method']   = 'Способ оплаты:';
 $_['text_shipping_address'] = 'Адрес доставки';
 $_['text_payment_address']  = 'Адрес оплаты';
+$_['text_email']  			= 'E-mail:';
+$_['text_telephone']  		= 'Телефон:';
+$_['text_ip']  				= 'IP адрес:';
 $_['text_product']          = 'Товары:';
 $_['text_total']            = 'Итого:';
 $_['text_download']         = 'После подтверждения оплаты, чтобы скачать товар, щелкните:';
 $_['text_comment']          = 'Комментарий к Вашему заказу:';
 $_['text_footer']           = 'Если у Вас есть какие-либо вопросы, ответьте на это сообщение.';
-$_['text_powered_by']       = 'powered by';
+$_['text_powered_by']       = 'работает на';
 
 // Column
 $_['column_product']        = 'Товар';

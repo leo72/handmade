@@ -11,6 +11,7 @@ $_['text_your_address']    = 'Ваш адрес';
 $_['text_newsletter']      = 'Подписка';
 $_['text_your_password']   = 'Ваш пароль';
 $_['text_agree']           = 'Я прочитал раздел "<a class="thickbox" href="index.php?route=information/information/loadInfo&create=1" alt="%s"><b>%s</b></a>" и согласен с правилами';
+
 // Entry
 $_['entry_firstname']      = 'Имя, Отчество:';
 $_['entry_lastname']       = 'Фамилия:';

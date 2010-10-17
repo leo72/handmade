@@ -3,15 +3,19 @@
 $_['heading_title']     = 'Без регистрации - Шаг 1';
 
 // Text
-$_['text_cart']         = 'Корзина';
-$_['text_guest_step_1'] = 'Без регистрации - Шаг 1';
-$_['text_your_details'] = 'Ваши персональные данные';
-$_['text_your_address'] = 'Ваш адрес';
+$_['text_cart']         	= 'Корзина';
+$_['text_guest_step_1'] 	= 'Без регистрации - Шаг 1';
+$_['text_your_details'] 	= 'Ваши персональные данные';
+$_['text_your_address'] 	= 'Ваш адрес';
+$_['text_shipping_address']	= 'Адрес доставки';
+$_['text_indicator'] 		= 'Отметьте здесь, если у Вас есть отдельный адрес доставки.';
 
 // Entry
 $_['entry_firstname']   = 'Имя, Отчество:';
 $_['entry_lastname']    = 'Фамилия:';
 $_['entry_email']       = 'E-Mail:';
+$_['entry_telephone']   = 'Контактный телефон:';
+$_['entry_fax']         = 'Факс:';
 $_['entry_company']     = 'Компания:';
 $_['entry_address_1']   = 'Адрес 1:';
 $_['entry_address_2']   = 'Адрес 2:';

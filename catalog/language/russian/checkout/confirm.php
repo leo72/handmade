@@ -15,9 +15,7 @@ $_['text_payment_address']  = 'Адрес оплаты';
 $_['text_payment_method']   = 'Способ оплаты';
 $_['text_change']           = 'Изменить';
 $_['text_comment']          = 'Ваши комментарии';
-$_['text_success']          = 'Купон успешно активирован!';
 $_['text_discount']         = 'Купон скидки';
-$_['text_coupon']           = 'Введите код купона и нажмите кнопку "Активировать купон".';
 
 // Column
 $_['column_product']        = 'Производитель';
@@ -25,10 +23,4 @@ $_['column_model']          = 'Модель';
 $_['column_quantity']       = 'Количество';
 $_['column_price']          = 'Цена';
 $_['column_total']          = 'Итого';	
-
-// Entry
-$_['entry_coupon']          = 'Купон:';
-
-// Error
-$_['error_coupon']          = 'Купон недействителен!';
 ?>
