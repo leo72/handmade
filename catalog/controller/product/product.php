@@ -315,8 +315,7 @@ class ControllerProductProduct extends Controller {
 					$add = $this->model_tool_seo_url->rewrite(HTTP_SERVER . 'index.php?route=product/product&product_id=' . $result['product_id']);
 				} else {
 					$add = HTTPS_SERVER . 'index.php?route=checkout/cart&product_id=' . $result['product_id'];
-				}
-			
+				}				
 				$this->data['products'][] = array(
 					'product_id'    => $result['product_id'],
 					'name'    		=> $result['name'],

@@ -38,12 +38,12 @@ final class Image {
     public function save($file, $quality = 100) {
         $info = pathinfo($file);
         $extension = $info['extension'];
-   
-        if ($extension == 'jpeg' || $extension == 'jpg') {
+        
+        if (strtolower($extension) == 'jpeg' || strtolower($extension) == 'jpg' ) {
             imagejpeg($this->image, $file, $quality);
-        } elseif($extension == 'png') {
+        } elseif(strtolower($extension) == 'png') {
             imagepng($this->image, $file, 0);
-        } elseif($extension == 'gif') {
+        } elseif(strtolower($extension) == 'gif') {
             imagegif($this->image, $file);
         }
 		   
