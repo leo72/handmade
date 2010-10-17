@@ -59,7 +59,7 @@
             </div>
           </div>
         </div>
-        <div style="background: #FCFCFC; border: 1px solid #8EAEC3; padding: 10px; height: 49%;"">
+        <div style="background: #FCFCFC; border: 1px solid #8EAEC3; padding: 10px; height: 49%;">
           <div id="report" style="width: 400px; height: 180px; margin: auto;"></div>
         </div>
       </div>
@@ -111,7 +111,7 @@
 function getSalesChart(range) {
 	$.ajax({
 		type: 'GET',
-		url: 'index.php?route=common/home/chart&range=' + range,
+		url: 'index.php?route=common/home/chart&token=<?php echo $token; ?>&range=' + range,
 		dataType: 'json',
 		async: false,
 		success: function(json) {

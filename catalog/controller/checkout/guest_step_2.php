@@ -24,8 +24,70 @@ class ControllerCheckoutGuestStep2 extends Controller {
     	if (!$this->cart->hasShipping()) {
 			unset($this->session->data['shipping_method']);
 			unset($this->session->data['shipping_methods']);
+    	}
+		
+		if (isset($this->session->data['guest']['shipping']['country_id'])) {
+			$this->tax->setZone($this->session->data['guest']['shipping']['country_id'], $this->session->data['guest']['shipping']['zone_id']);
+		} else {
+			$this->tax->setZone($this->session->data['guest']['country_id'], $this->session->data['guest']['zone_id']);
+		}
+		
+		$this->language->load('checkout/guest_step_2');
+		
+		$total_data = array();
+		$total = 0;
+		$taxes = $this->cart->getTaxes();
+		 
+		$this->load->model('checkout/extension');
+		
+		$sort_order = array(); 
+		
+		$results = $this->model_checkout_extension->getExtensions('total');
+		
+		foreach ($results as $key => $value) {
+			$sort_order[$key] = $this->config->get($value['key'] . '_sort_order');
+		}
+		
+		array_multisort($sort_order, SORT_ASC, $results);
+		
+		foreach ($results as $result) {
+			$this->load->model('total/' . $result['key']);
 
-			$this->tax->setZone($this->config->get('config_country_id'), $this->config->get('config_zone_id'));
+			$this->{'model_total_' . $result['key']}->getTotal($total_data, $total, $taxes);
+		}
+		
+		$sort_order = array(); 
+	  
+		foreach ($total_data as $key => $value) {
+      		$sort_order[$key] = $value['sort_order'];
+    	}
+
+    	array_multisort($sort_order, SORT_ASC, $total_data);
+
+    	$this->document->title = $this->language->get('heading_title'); 
+
+		$this->data['heading_title'] = $this->language->get('heading_title');
+		
+		if (($this->request->server['REQUEST_METHOD'] == 'POST') && isset($this->request->post['coupon']) && $this->validateCoupon()) {
+			$this->session->data['coupon'] = $this->request->post['coupon'];
+			
+			$this->session->data['success'] = $this->language->get('text_success');
+			
+			$this->redirect(HTTPS_SERVER . 'index.php?route=checkout/guest_step_2');
+		}
+		
+		if (($this->request->server['REQUEST_METHOD'] == 'POST') && !isset($this->request->post['coupon']) && $this->validate()) {
+			if (isset($this->request->post['shipping_method'])) {
+				$shipping = explode('.', $this->request->post['shipping_method']);
+			
+				$this->session->data['shipping_method'] = $this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]];
+			}
+			
+			$this->session->data['payment_method'] = $this->session->data['payment_methods'][$this->request->post['payment_method']];
+		
+			$this->session->data['comment'] = $this->request->post['comment'];
+			
+	  		$this->redirect(HTTPS_SERVER . 'index.php?route=checkout/guest_step_3');
     	}		
 		
 		$this->load->model('checkout/extension');
@@ -39,7 +101,11 @@ class ControllerCheckoutGuestStep2 extends Controller {
 			foreach ($results as $result) {
 				$this->load->model('shipping/' . $result['key']);
 				
-				$quote = $this->{'model_shipping_' . $result['key']}->getQuote($this->session->data['guest']); 
+				if (isset($this->session->data['guest']['shipping'])){
+					$quote = $this->{'model_shipping_' . $result['key']}->getQuote($this->session->data['guest']['shipping']);
+				} else {
+					$quote = $this->{'model_shipping_' . $result['key']}->getQuote($this->session->data['guest']); 
+				}
 	
 				if ($quote) {
 					$quote_data[$result['key']] = array(
@@ -86,24 +152,8 @@ class ControllerCheckoutGuestStep2 extends Controller {
     	array_multisort($sort_order, SORT_ASC, $method_data);			
 		
 		$this->session->data['payment_methods'] = $method_data;
-		
-		$this->language->load('checkout/guest_step_2');
-		
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			if (isset($this->request->post['shipping_method'])) {
-				$shipping = explode('.', $this->request->post['shipping_method']);
-			
-				$this->session->data['shipping_method'] = $this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]];
-			}
-			
-			$this->session->data['payment_method'] = $this->session->data['payment_methods'][$this->request->post['payment_method']];
-		
-			$this->session->data['comment'] = $this->request->post['comment'];
-			
-	  		$this->redirect(HTTPS_SERVER . 'index.php?route=checkout/guest_step_3');
-    	} 
 
-		$this->document->title = $this->language->get('heading_title');
+		//$this->document->title = $this->language->get('heading_title');
       	
 		$this->document->breadcrumbs = array();
 
@@ -131,17 +181,18 @@ class ControllerCheckoutGuestStep2 extends Controller {
         	'separator' => $this->language->get('text_separator')
       	);
 		
-    	$this->data['heading_title'] = $this->language->get('heading_title');
-
 		$this->data['text_shipping_method'] = $this->language->get('text_shipping_method');
     	$this->data['text_shipping_methods'] = $this->language->get('text_shipping_methods');
 		$this->data['text_payment_method'] = $this->language->get('text_payment_method');
 		$this->data['text_payment_methods'] = $this->language->get('text_payment_methods');
 		$this->data['text_comments'] = $this->language->get('text_comments');
+		$this->data['text_coupon'] = $this->language->get('text_coupon');
 		
 		$this->data['entry_shipping'] = $this->language->get('entry_shipping');
 		$this->data['entry_payment'] = $this->language->get('entry_payment');
+		$this->data['entry_coupon'] = $this->language->get('entry_coupon');
 		
+		$this->data['button_coupon'] = $this->language->get('button_coupon');		
 		$this->data['button_continue'] = $this->language->get('button_continue');
 		$this->data['button_back'] = $this->language->get('button_back');
 
@@ -153,6 +204,24 @@ class ControllerCheckoutGuestStep2 extends Controller {
     		$this->data['error_warning'] = $this->error['warning'];
 		} else {
 			$this->data['error_warning'] = '';
+		}
+		
+		if (isset($this->session->data['success'])) {
+			$this->data['success'] = $this->session->data['success'];
+		
+    		unset($this->session->data['success']);
+		} else {
+			$this->data['success'] = '';
+		}
+		
+		$this->data['coupon_status'] = $this->config->get('coupon_status');
+		
+		if (isset($this->request->post['coupon'])) {
+			$this->data['coupon'] = $this->request->post['coupon'];
+		} elseif (isset($this->session->data['coupon'])) {
+			$this->data['coupon'] = $this->session->data['coupon'];
+		} else {
+			$this->data['coupon'] = '';
 		}
 		
 		if (isset($this->session->data['shipping_methods']) && !$this->session->data['shipping_methods']) {
@@ -193,7 +262,9 @@ class ControllerCheckoutGuestStep2 extends Controller {
 		
     	$this->data['countries'] = $this->model_localisation_country->getCountries();
 
-		if (isset($this->session->data['comment'])) {
+		if (isset($this->request->post['comment'])) {
+			$this->data['comment'] = $this->request->post['comment'];
+		} elseif (isset($this->session->data['comment'])) {
     		$this->data['comment'] = $this->session->data['comment'];
 		} else {
 			$this->data['comment'] = '';
@@ -228,10 +299,10 @@ class ControllerCheckoutGuestStep2 extends Controller {
 		}
 		
 		$this->children = array(
-			'common/header',
+			'common/column_right',
 			'common/footer',
 			'common/column_left',
-			'common/column_right'
+			'common/header'
 		);
 		
 		$this->response->setOutput($this->render(TRUE), $this->config->get('config_compression'));
@@ -275,6 +346,25 @@ class ControllerCheckoutGuestStep2 extends Controller {
     	} else {
       		return FALSE;
     	}
+  	}
+  	
+  	private function validateCoupon() {
+  	
+  		$this->load->model('checkout/coupon');
+		
+		$this->language->load('checkout/payment');
+		
+		$coupon = $this->model_checkout_coupon->getCoupon($this->request->post['coupon']);
+			
+		if (!$coupon) {
+			$this->error['warning'] = $this->language->get('error_coupon');
+		}
+  		
+  		if (!$this->error) {
+	  		return TRUE;
+		} else {
+	  		return FALSE;
+		}
   	}
 }
 ?>

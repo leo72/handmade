@@ -16,7 +16,7 @@ class ControllerPaymentAuthorizenetAim extends Controller {
 			
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$this->redirect(HTTPS_SERVER . 'index.php?route=extension/payment');
+			$this->redirect(HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token']);
 		}
 
 		$this->data['heading_title'] = $this->language->get('heading_title');
@@ -26,6 +26,7 @@ class ControllerPaymentAuthorizenetAim extends Controller {
 		$this->data['text_all_zones'] = $this->language->get('text_all_zones');
 		$this->data['text_test'] = $this->language->get('text_test');
 		$this->data['text_live'] = $this->language->get('text_live');
+		$this->data['text_dev'] = $this->language->get('text_dev');
 		$this->data['text_authorization'] = $this->language->get('text_authorization');
 		$this->data['text_capture'] = $this->language->get('text_capture');		
 		
@@ -62,36 +63,30 @@ class ControllerPaymentAuthorizenetAim extends Controller {
 		} else {
 			$this->data['error_key'] = '';
 		}
-
- 		if (isset($this->error['hash'])) {
-			$this->data['error_hash'] = $this->error['hash'];
-		} else {
-			$this->data['error_hash'] = '';
-		}
 		
   		$this->document->breadcrumbs = array();
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=common/home',
+       		'href'      => HTTPS_SERVER . 'index.php?route=common/home&token=' . $this->session->data['token'],
        		'text'      => $this->language->get('text_home'),
       		'separator' => FALSE
    		);
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=extension/payment',
+       		'href'      => HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token'],
        		'text'      => $this->language->get('text_payment'),
       		'separator' => ' :: '
    		);
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=payment/authorizenet_aim',
+       		'href'      => HTTPS_SERVER . 'index.php?route=payment/authorizenet_aim&token=' . $this->session->data['token'],
        		'text'      => $this->language->get('heading_title'),
       		'separator' => ' :: '
    		);
 				
-		$this->data['action'] = HTTPS_SERVER . 'index.php?route=payment/authorizenet_aim';
+		$this->data['action'] = HTTPS_SERVER . 'index.php?route=payment/authorizenet_aim&token=' . $this->session->data['token'];
 		
-		$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/payment';
+		$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/payment&token=' . $this->session->data['token'];
 		
 		if (isset($this->request->post['authorizenet_aim_login'])) {
 			$this->data['authorizenet_aim_login'] = $this->request->post['authorizenet_aim_login'];
@@ -181,10 +176,6 @@ class ControllerPaymentAuthorizenetAim extends Controller {
 
 		if (!$this->request->post['authorizenet_aim_key']) {
 			$this->error['key'] = $this->language->get('error_key');
-		}
-
-		if (!$this->request->post['authorizenet_aim_hash']) {
-			$this->error['hash'] = $this->language->get('error_hash');
 		}
 		
 		if (!$this->error) {

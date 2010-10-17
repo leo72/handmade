@@ -97,9 +97,11 @@
       </table>
     </form>
     <div class="pagination"><?php echo $pagination; ?></div>
-    <script type="text/javascript"><!--
+  </div>
+</div>
+<script type="text/javascript"><!--
 function filter() {
-	url = 'index.php?route=catalog/product';
+	url = 'index.php?route=catalog/product&token=<?php echo $token; ?>';
 	
 	var filter_name = $('input[name=\'filter_name\']').attr('value');
 	
@@ -128,6 +130,12 @@ function filter() {
 	location = url;
 }
 //--></script>
-  </div>
-</div>
+
+<script type="text/javascript"><!--
+$('#form input').keydown(function(e) {
+	if (e.keyCode == 13) {
+		filter();
+	}
+});
+//--></script>
 <?php echo $footer; ?>

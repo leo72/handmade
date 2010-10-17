@@ -14,48 +14,10 @@
       <table class="form">
         <tr>
           <td><span class="required">*</span> <?php echo $entry_name; ?></td>
-          <td><input name="name" value="<?php echo $name; ?>" />
+          <td><input name="name" value="<?php echo $name; ?>" size="100" />
             <?php if ($error_name) { ?>
             <span class="error"><?php echo $error_name; ?></span>
             <?php } ?></td>
-        </tr>
-         <tr>
-          <td><?php echo $entry_keyword; ?></td>
-          <td><input type="text" name="keyword" value="<?php echo $keyword; ?>" /></td>
-        </tr>
-        <tr>
-          <td><?php echo $entry_image; ?></td>
-          <td><input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
-            <img src="<?php echo $preview; ?>" alt="" id="preview" style="border: 1px solid #EEEEEE;" />&nbsp;<img src="view/image/image.png" alt="" style="cursor: pointer;" align="top" onclick="image_upload('image', 'preview');" /></td>
-        </tr>
-       </table>
-       <div id="languages" class="htabs">
-	          <?php foreach ($languages as $language) { ?>
-		  		<?php if ($language['status']) { ?>
-	          		<a tab="#language<?php echo $language['language_id']; ?>"><img src="view/image/flags/<?php echo $language['image']; ?>" title="<?php echo $language['name']; ?>" /> <?php echo $language['name']; ?></a>
-	          <?php } ?>
-		  <?php } ?>
-	  	</div>
-	  	<?php foreach ($languages as $language) { ?>
-		<?php if ($language['status']) { ?>
-        <div id="language<?php echo $language['language_id']; ?>">
-       	  <table class="form">
-        	<tr>
-              <td><?php echo $entry_meta_description; ?></td>
-              <td><textarea name="manufacturer_description[<?php echo $language['language_id']; ?>][meta_description]" cols="40" rows="5"><?php echo isset($manufacturer_description[$language['language_id']]) ? $manufacturer_description[$language['language_id']]['meta_description'] : ''; ?></textarea></td>
-            </tr>
-            <tr>
-              <td><?php echo $entry_description; ?></td>
-              <td><textarea name="manufacturer_description[<?php echo $language['language_id']; ?>][description]" id="description<?php echo $language['language_id']; ?>"><?php echo isset($manufacturer_description[$language['language_id']]) ? $manufacturer_description[$language['language_id']]['description'] : ''; ?></textarea></td>
-            </tr>
-           </table>
-        </div>
-        <?php } ?>
-		<?php } ?>
-       <table class="form">
-       <tr>
-          <td><?php echo $entry_sort_order; ?></td>
-          <td><input name="sort_order" value="<?php echo $sort_order; ?>" size="1" /></td>
         </tr>
         <tr>
           <td><?php echo $entry_store; ?></td>
@@ -84,18 +46,23 @@
               <?php } ?>
             </div></td>
         </tr>
+        <tr>
+          <td><?php echo $entry_keyword; ?></td>
+          <td><input type="text" name="keyword" value="<?php echo $keyword; ?>" /></td>
+        </tr>
+        <tr>
+          <td><?php echo $entry_image; ?></td>
+          <td><input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
+            <img src="<?php echo $preview; ?>" alt="" id="preview" class="image" onclick="image_upload('image', 'preview');" /></td>
+        </tr>
+        <tr>
+          <td><?php echo $entry_sort_order; ?></td>
+          <td><input name="sort_order" value="<?php echo $sort_order; ?>" size="1" /></td>
+        </tr>
       </table>
     </form>
   </div>
 </div>
-<script type="text/javascript" src="view/javascript/ckeditor/ckeditor.js"></script>
-<script type="text/javascript"><!--
-<?php foreach ($languages as $language) { ?>
-<?php if ($language['status']) { ?>
-CKEDITOR.replace('description<?php echo $language['language_id']; ?>');
-<?php } ?>
-<?php } ?>
-//--></script>
 <script type="text/javascript" src="view/javascript/jquery/ui/ui.draggable.js"></script>
 <script type="text/javascript" src="view/javascript/jquery/ui/ui.resizable.js"></script>
 <script type="text/javascript" src="view/javascript/jquery/ui/ui.dialog.js"></script>
@@ -104,19 +71,19 @@ CKEDITOR.replace('description<?php echo $language['language_id']; ?>');
 function image_upload(field, preview) {
 	$('#dialog').remove();
 	
-	$('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="index.php?route=common/filemanager&field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 100%; height: 100%;" frameborder="no" scrolling="auto"></iframe></div>');
+	$('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="index.php?route=common/filemanager&token=<?php echo $token; ?>&field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 100%; height: 100%;" frameborder="no" scrolling="auto"></iframe></div>');
 	
 	$('#dialog').dialog({
 		title: '<?php echo $text_image_manager; ?>',
 		close: function (event, ui) {
 			if ($('#' + field).attr('value')) {
 				$.ajax({
-					url: 'index.php?route=common/filemanager/image',
+					url: 'index.php?route=common/filemanager/image&token=<?php echo $token; ?>',
 					type: 'POST',
 					data: 'image=' + encodeURIComponent($('#' + field).val()),
 					dataType: 'text',
 					success: function(data) {
-						$('#' + preview).replaceWith('<img src="' + data + '" alt="" id="' + preview + '" style="border: 1px solid #EEEEEE;" />');
+						$('#' + preview).replaceWith('<img src="' + data + '" alt="" id="' + preview + '" class="image" onclick="image_upload(\'' + field + '\', \'' + preview + '\');" />');
 					}
 				});
 			}
@@ -128,9 +95,5 @@ function image_upload(field, preview) {
 		modal: false
 	});
 };
-//--></script>
-<script type="text/javascript"><!--
-$.tabs('#tabs a'); 
-$.tabs('#languages a');
 //--></script>
 <?php echo $footer; ?>

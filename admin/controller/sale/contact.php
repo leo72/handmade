@@ -22,6 +22,7 @@ class ControllerSaleContact extends Controller {
 			
 			$emails = array();
 			
+			// All customers by group
 			if (isset($this->request->post['group'])) {
 				switch ($this->request->post['group']) {
 					case 'newsletter':
@@ -41,6 +42,7 @@ class ControllerSaleContact extends Controller {
 				}
 			}
 			
+			// All customers by name/email
 			if (isset($this->request->post['to']) && $this->request->post['to']) {					
 				foreach ($this->request->post['to'] as $customer_id) {
 					$customer_info = $this->model_sale_customer->getCustomer($customer_id);
@@ -49,7 +51,21 @@ class ControllerSaleContact extends Controller {
 						$emails[] = $customer_info['email'];
 					}
 				}
-			}	
+			}
+			
+			// All customers by product
+			if (isset($this->request->post['product'])) {
+				foreach ($this->request->post['product'] as $product_id) {
+					$results = $this->model_sale_customer->getCustomersByProduct($product_id);
+					
+					foreach ($results as $result) {
+						$emails[] = $result['email'];
+					}
+				}
+			}
+			
+			// Prevent Duplicates
+			$emails = array_unique($emails);
 			
 			if ($emails) {
 				$message  = '<html dir="ltr" lang="en">' . "\n";
@@ -79,6 +95,7 @@ class ControllerSaleContact extends Controller {
 				foreach ($emails as $email) {
 					$mail = new Mail();	
 					$mail->protocol = $this->config->get('config_mail_protocol');
+					$mail->parameter = $this->config->get('config_mail_parameter');
 					$mail->hostname = $this->config->get('config_smtp_host');
 					$mail->username = $this->config->get('config_smtp_username');
 					$mail->password = $this->config->get('config_smtp_password');
@@ -110,6 +127,7 @@ class ControllerSaleContact extends Controller {
 		
 		$this->data['entry_store'] = $this->language->get('entry_store');
 		$this->data['entry_to'] = $this->language->get('entry_to');
+		$this->data['entry_product'] = $this->language->get('entry_product');
 		$this->data['entry_subject'] = $this->language->get('entry_subject');
 		$this->data['entry_message'] = $this->language->get('entry_message');
 		
@@ -117,6 +135,8 @@ class ControllerSaleContact extends Controller {
 		$this->data['button_cancel'] = $this->language->get('button_cancel');
 		
 		$this->data['tab_general'] = $this->language->get('tab_general');
+		
+		$this->data['token'] = $this->session->data['token'];
 		
  		if (isset($this->error['warning'])) {
 			$this->data['error_warning'] = $this->error['warning'];
@@ -139,13 +159,13 @@ class ControllerSaleContact extends Controller {
   		$this->document->breadcrumbs = array();
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=common/home',
+       		'href'      => HTTPS_SERVER . 'index.php?route=common/home&token=' . $this->session->data['token'],
        		'text'      => $this->language->get('text_home'),
       		'separator' => FALSE
    		);
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=sale/contact',
+       		'href'      => HTTPS_SERVER . 'index.php?route=sale/contact&token=' . $this->session->data['token'],
        		'text'      => $this->language->get('heading_title'),
       		'separator' => ' :: '
    		);
@@ -158,8 +178,8 @@ class ControllerSaleContact extends Controller {
 			$this->data['success'] = '';
 		}
 				
-		$this->data['action'] = HTTPS_SERVER . 'index.php?route=sale/contact';
-    	$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=sale/contact';
+		$this->data['action'] = HTTPS_SERVER . 'index.php?route=sale/contact&token=' . $this->session->data['token'];
+    	$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=sale/contact&token=' . $this->session->data['token'];
 
 		if (isset($this->request->post['store_id'])) {
 			$this->data['store_id'] = $this->request->post['store_id'];
@@ -186,6 +206,16 @@ class ControllerSaleContact extends Controller {
 			}
 		}
 
+		$this->load->model('catalog/product');
+		
+		$this->data['products'] = $this->model_catalog_product->getProducts();
+		
+		if (isset($this->request->post['product'])) {
+			$this->data['product'] = $this->request->post['product'];
+		} else {
+			$this->data['product'] = '';
+		}
+		
 		if (isset($this->request->post['group'])) {
 			$this->data['group'] = $this->request->post['group'];
 		} else {
@@ -203,6 +233,10 @@ class ControllerSaleContact extends Controller {
 		} else {
 			$this->data['message'] = '';
 		}
+		
+		$this->load->model('catalog/category');
+				
+		$this->data['categories'] = $this->model_catalog_category->getCategories(0);
 
 		$this->template = 'sale/contact.tpl';
 		$this->children = array(
@@ -252,6 +286,32 @@ class ControllerSaleContact extends Controller {
 		} else {
 			return FALSE;
 		}
-	}	
+	}
+	
+	public function category() {
+		$this->load->model('catalog/product');
+		
+		if (isset($this->request->get['category_id'])) {
+			$category_id = $this->request->get['category_id'];
+		} else {
+			$category_id = 0;
+		}
+		
+		$product_data = array();
+		
+		$results = $this->model_catalog_product->getProductsByCategoryId($category_id);
+		
+		foreach ($results as $result) {
+			$product_data[] = array(
+				'product_id' => $result['product_id'],
+				'name'       => $result['name'],
+				'model'      => $result['model']
+			);
+		}
+		
+		$this->load->library('json');
+		
+		$this->response->setOutput(Json::encode($product_data));
+	}
 }
 ?>
