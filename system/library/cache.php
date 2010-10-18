@@ -10,7 +10,9 @@ final class Cache {
 				$time = substr(strrchr($file, '.'), 1);
 
       			if ($time < time()) {
-					unlink($file);
+					if (file_exists($file)) {
+						unlink($file);
+					}
       			}
     		}
 		}
@@ -48,7 +50,10 @@ final class Cache {
 		
 		if ($files) {
     		foreach ($files as $file) {
-      			unlink($file);
+      			if (file_exists($file)) {
+					unlink($file);
+					clearstatcache();
+				}
     		}
 		}
   	}

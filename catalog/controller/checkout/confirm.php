@@ -3,7 +3,15 @@ class ControllerCheckoutConfirm extends Controller {
 	private $error = array();
 
 	public function index() {
-	   	if (!$this->cart->hasProducts() || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+	   	if (($this->request->server['REQUEST_METHOD'] == 'POST') && isset($this->request->post['coupon']) && $this->validateCoupon()) {
+			$this->session->data['coupon'] = $this->request->post['coupon'];
+
+			$this->session->data['success'] = $this->language->get('text_success');
+
+			$this->redirect(HTTPS_SERVER . 'index.php?route=checkout/confirm');
+		}
+		
+		if (!$this->cart->hasProducts() || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
 	  		$this->redirect(HTTPS_SERVER . 'index.php?route=checkout/cart');
     	}		
 		
@@ -25,8 +33,6 @@ class ControllerCheckoutConfirm extends Controller {
 			unset($this->session->data['shipping_address_id']);
 			unset($this->session->data['shipping_method']);
 			unset($this->session->data['shipping_methods']);
-			
-			$this->tax->setZone($this->config->get('config_country_id'), $this->config->get('config_zone_id'));
 		}
 		
     	if (!isset($this->session->data['payment_address_id']) || !$this->session->data['payment_address_id']) { 
@@ -70,14 +76,6 @@ class ControllerCheckoutConfirm extends Controller {
 		$this->language->load('checkout/confirm');
 
     	$this->document->title = $this->language->get('heading_title'); 
-
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
-			$this->session->data['coupon'] = $this->request->post['coupon'];
-			
-			$this->session->data['success'] = $this->language->get('text_success');
-			
-			$this->redirect(HTTPS_SERVER . 'index.php?route=checkout/confirm');
-		}	
 		
 		$data = array();
 		
@@ -136,7 +134,7 @@ class ControllerCheckoutConfirm extends Controller {
 		$payment_address_id = $this->session->data['payment_address_id'];	
 		
 		$payment_address = $this->model_account_address->getAddress($payment_address_id);
-		
+				
 		$data['payment_firstname'] = $payment_address['firstname'];
 		$data['payment_lastname'] = $payment_address['lastname'];	
 		$data['payment_company'] = $payment_address['company'];	
@@ -149,6 +147,10 @@ class ControllerCheckoutConfirm extends Controller {
 		$data['payment_country'] = $payment_address['country'];
 		$data['payment_country_id'] = $payment_address['country_id'];
 		$data['payment_address_format'] = $payment_address['address_format'];
+	
+		if (!$this->cart->hasShipping()) {
+			$this->tax->setZone($payment_address['country_id'], $payment_address['zone_id']);
+		}
 	
 		if (isset($this->session->data['payment_method']['title'])) {
 			$data['payment_method'] = $this->session->data['payment_method']['title'];
@@ -176,7 +178,8 @@ class ControllerCheckoutConfirm extends Controller {
         		'model'      => $product['model'],
         		'option'     => $option_data,
 				'download'   => $product['download'],
-				'quantity'   => $product['quantity'], 
+				'quantity'   => $product['quantity'],
+				'subtract'   => $product['subtract'],
 				'price'      => $product['price'],
         		'total'      => $product['total'],
 				'tax'        => $this->tax->getRate($product['tax_class_id'])
@@ -253,19 +256,19 @@ class ControllerCheckoutConfirm extends Controller {
     	$this->data['text_payment_address'] = $this->language->get('text_payment_address');
     	$this->data['text_payment_method'] = $this->language->get('text_payment_method');
     	$this->data['text_comment'] = $this->language->get('text_comment');
-    	$this->data['text_change'] = $this->language->get('text_change');
 		$this->data['text_coupon'] = $this->language->get('text_coupon');
+    	$this->data['text_change'] = $this->language->get('text_change');
     	
+		$this->data['button_coupon'] = $this->language->get('button_coupon');
+
+		$this->data['entry_coupon'] = $this->language->get('entry_coupon');
+		
 		$this->data['column_product'] = $this->language->get('column_product');
     	$this->data['column_model'] = $this->language->get('column_model');
     	$this->data['column_quantity'] = $this->language->get('column_quantity');
     	$this->data['column_price'] = $this->language->get('column_price');
     	$this->data['column_total'] = $this->language->get('column_total');
 		
-		$this->data['entry_coupon'] = $this->language->get('entry_coupon');
-		
-		$this->data['button_coupon'] = $this->language->get('button_coupon');
-
 		if (isset($this->error['warning'])) {
     		$this->data['error_warning'] = $this->error['warning'];
 		} else {
@@ -279,19 +282,7 @@ class ControllerCheckoutConfirm extends Controller {
 		} else {
 			$this->data['success'] = '';
 		}
-		
-		$this->data['action'] = HTTP_SERVER . 'index.php?route=checkout/confirm';
-		
-		$this->data['coupon_status'] = $this->config->get('coupon_status');
-
-		if (isset($this->request->post['coupon'])) {
-			$this->data['coupon'] = $this->request->post['coupon'];
-		} elseif (isset($this->session->data['coupon'])) {
-			$this->data['coupon'] = $this->session->data['coupon'];
-		} else {
-			$this->data['coupon'] = '';
-		}
-		
+				
 		if ($this->cart->hasShipping()) {
 			if ($shipping_address['address_format']) {
       			$format = $shipping_address['address_format'];
@@ -406,6 +397,7 @@ class ControllerCheckoutConfirm extends Controller {
         		'model'      => $product['model'],
         		'option'     => $option_data,
         		'quantity'   => $product['quantity'],
+				'subtract'   => $product['subtract'],
 				'tax'        => $this->tax->getRate($product['tax_class_id']),
         		'price'      => $this->currency->format($product['price']),
         		'total'      => $this->currency->format($product['total']),
@@ -416,6 +408,18 @@ class ControllerCheckoutConfirm extends Controller {
 		$this->data['totals'] = $total_data;
 	
 		$this->data['comment'] = nl2br($this->session->data['comment']);
+		
+		$this->data['coupon_status'] = $this->config->get('coupon_status');
+		
+		$this->data['action'] = HTTPS_SERVER . 'index.php?route=checkout/confirm';
+		
+		if (isset($this->request->post['coupon'])) {
+			$this->data['coupon'] = $this->request->post['coupon'];
+		} elseif (isset($this->session->data['coupon'])) {
+			$this->data['coupon'] = $this->session->data['coupon'];
+		} else {
+			$this->data['coupon'] = '';
+		}
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/checkout/confirm.tpl')) {
 			$this->template = $this->config->get('config_template') . '/template/checkout/confirm.tpl';
@@ -424,30 +428,33 @@ class ControllerCheckoutConfirm extends Controller {
 		}
 		
 		$this->children = array(
-			'common/header',
+			'common/column_right',
 			'common/footer',
 			'common/column_left',
-			'common/column_right',
+			'common/header',
 			'payment/' . $this->session->data['payment_method']['id']
 		);
 		
 		$this->response->setOutput($this->render(TRUE), $this->config->get('config_compression'));
   	}
 	
-	private function validate() {
-		$this->load->model('checkout/coupon');
-			
+	private function validateCoupon() {
+
+  		$this->load->model('checkout/coupon');
+
+		$this->language->load('checkout/confirm');
+
 		$coupon = $this->model_checkout_coupon->getCoupon($this->request->post['coupon']);
-			
+
 		if (!$coupon) {
 			$this->error['warning'] = $this->language->get('error_coupon');
 		}
-		
-		if (!$this->error) {
-			return TRUE;
+
+  		if (!$this->error) {
+	  		return TRUE;
 		} else {
-			return FALSE;
+	  		return FALSE;
 		}
-	}	
+  	}
 }
 ?>

@@ -3,11 +3,12 @@
 $_['heading_title']          = 'Administration';
 
 // Text
-$_['text_affiliate']         = 'Affiliates';
 $_['text_backup']            = 'Backup / Restore';
 $_['text_catalog']           = 'Catalog';
-$_['text_category']          = 'Categories'; 
-$_['text_country']           = 'Countries'; 
+$_['text_category']          = 'Categories';
+$_['text_checkall']			 = 'Select/Deselect All';
+$_['text_confirm']			 = 'Delete/Uninstall cannot be undone! Are you sure you want to do this?';
+$_['text_country']           = 'Countries';
 $_['text_coupon']            = 'Coupons';
 $_['text_currency']          = 'Currencies';
 $_['text_customer']          = 'Customers';
@@ -53,4 +54,7 @@ $_['text_user_group']        = 'User Groups';
 $_['text_weight_class']      = 'Weight Classes';
 $_['text_length_class']      = 'Length Classes';
 $_['text_zone']              = 'Zones';
+
+// Error
+$_['error_install']          = 'WARNING: INSTALL FOLDER STILL EXISTS!';
 ?>

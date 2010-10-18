@@ -14,7 +14,7 @@ class ControllerSettingStore extends Controller {
 	  		
 			$this->session->data['success'] = $this->language->get('text_success');
 			
-			$this->redirect(HTTPS_SERVER . 'index.php?route=setting/store/update&store_id=' . $store_id);
+			$this->redirect(HTTPS_SERVER . 'index.php?route=setting/store/update&token=' . $this->session->data['token'] . '&store_id=' . $store_id);
     	}
 	
     	$this->getForm();
@@ -32,7 +32,7 @@ class ControllerSettingStore extends Controller {
 			
 			$this->session->data['success'] = $this->language->get('text_success');
 			
-			$this->redirect(HTTPS_SERVER . 'index.php?route=setting/store/update&store_id=' . $this->request->get['store_id']);
+			$this->redirect(HTTPS_SERVER . 'index.php?route=setting/store/update&token=' . $this->session->data['token'] . '&store_id=' . $this->request->get['store_id']);
 		}
 
     	$this->getForm();
@@ -50,7 +50,7 @@ class ControllerSettingStore extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 			
-			$this->redirect(HTTPS_SERVER . 'index.php?route=setting/setting');
+			$this->redirect(HTTPS_SERVER . 'index.php?route=setting/setting&token=' . $this->session->data['token']);
 		}
 
     	$this->getForm();
@@ -84,9 +84,7 @@ class ControllerSettingStore extends Controller {
 		$this->data['entry_account'] = $this->language->get('entry_account');
 		$this->data['entry_checkout'] = $this->language->get('entry_checkout');
 		$this->data['entry_stock_display'] = $this->language->get('entry_stock_display');
-		$this->data['entry_stock_check'] = $this->language->get('entry_stock_check');
 		$this->data['entry_stock_checkout'] = $this->language->get('entry_stock_checkout');
-		$this->data['entry_stock_subtract'] = $this->language->get('entry_stock_subtract');
 		$this->data['entry_order_status'] = $this->language->get('entry_order_status');
 		$this->data['entry_logo'] = $this->language->get('entry_logo');
 		$this->data['entry_icon'] = $this->language->get('entry_icon');
@@ -100,6 +98,7 @@ class ControllerSettingStore extends Controller {
 		$this->data['entry_ssl'] = $this->language->get('entry_ssl');
 		$this->data['entry_catalog_limit'] = $this->language->get('entry_catalog_limit');
 		$this->data['entry_cart_weight'] = $this->language->get('entry_cart_weight');
+		$this->data['entry_review'] = $this->language->get('entry_review');
 		
 		$this->data['button_save'] = $this->language->get('button_save');
 		$this->data['button_cancel'] = $this->language->get('button_cancel');
@@ -112,6 +111,8 @@ class ControllerSettingStore extends Controller {
 		$this->data['tab_option'] = $this->language->get('tab_option');
 		$this->data['tab_image'] = $this->language->get('tab_image');
 		$this->data['tab_server'] = $this->language->get('tab_server');
+		
+		$this->data['token'] = $this->session->data['token'];
 		
  		if (isset($this->error['warning'])) {
 			$this->data['error_warning'] = $this->error['warning'];
@@ -188,13 +189,13 @@ class ControllerSettingStore extends Controller {
   		$this->document->breadcrumbs = array();
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=common/home',
+       		'href'      => HTTPS_SERVER . 'index.php?route=common/home&token=' . $this->session->data['token'],
        		'text'      => $this->language->get('text_home'),
       		'separator' => FALSE
    		);
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=setting/store',
+       		'href'      => HTTPS_SERVER . 'index.php?route=setting/store&token=' . $this->session->data['token'],
        		'text'      => $this->language->get('heading_title'),
       		'separator' => ' :: '
    		);
@@ -207,24 +208,24 @@ class ControllerSettingStore extends Controller {
 			$this->data['success'] = '';
 		}
 		
-		$this->data['insert'] = HTTPS_SERVER . 'index.php?route=setting/store/insert';
+		$this->data['insert'] = HTTPS_SERVER . 'index.php?route=setting/store/insert&token=' . $this->session->data['token'];
 		
 		if (isset($this->request->get['store_id'])) {
-			$this->data['delete'] = HTTPS_SERVER . 'index.php?route=setting/store/delete&store_id=' . $this->request->get['store_id'];
+			$this->data['delete'] = HTTPS_SERVER . 'index.php?route=setting/store/delete&token=' . $this->session->data['token'] . '&store_id=' . $this->request->get['store_id'];
 		} else {
 			$this->data['delete'] = '';
 		}
 		
 		if (!isset($this->request->get['store_id'])) {
-			$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=setting/setting';
+			$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=setting/setting&token=' . $this->session->data['token'];
 		} else {
-			$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=setting/store/update&store_id=' . $this->request->get['store_id'];
+			$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=setting/store/update&token=' . $this->session->data['token'] . '&store_id=' . $this->request->get['store_id'];
 		}
 		
 		if (!isset($this->request->get['store_id'])) {
-			$this->data['action'] = HTTPS_SERVER . 'index.php?route=setting/store/insert';
+			$this->data['action'] = HTTPS_SERVER . 'index.php?route=setting/store/insert&token=' . $this->session->data['token'];
 		} else {
-			$this->data['action'] = HTTPS_SERVER . 'index.php?route=setting/store/update&store_id=' . $this->request->get['store_id'];
+			$this->data['action'] = HTTPS_SERVER . 'index.php?route=setting/store/update&token=' . $this->session->data['token'] . '&store_id=' . $this->request->get['store_id'];
 		}
 		
 		$this->data['stores'] = array();
@@ -232,7 +233,7 @@ class ControllerSettingStore extends Controller {
 		$this->data['stores'][] = array(
 			'store_id' => 0,
 			'name'     => $this->language->get('text_default'),
-			'href'     => HTTPS_SERVER . 'index.php?route=setting/setting'
+			'href'     => HTTPS_SERVER . 'index.php?route=setting/setting&token=' . $this->session->data['token']
 		); 
 		
 		$this->load->model('setting/store');
@@ -243,7 +244,7 @@ class ControllerSettingStore extends Controller {
 			$this->data['stores'][] = array(
 				'store_id' => $result['store_id'],
 				'name'     => $result['name'],
-				'href'     => HTTPS_SERVER . 'index.php?route=setting/store/update&store_id=' . $result['store_id']
+				'href'     => HTTPS_SERVER . 'index.php?route=setting/store/update&token=' . $this->session->data['token'] . '&store_id=' . $result['store_id']
 			); 
 		}
 		
@@ -432,14 +433,6 @@ class ControllerSettingStore extends Controller {
 		} else {
 			$this->data['stock_display'] = '';
 		}
-		
-		if (isset($this->request->post['stock_check'])) {
-			$this->data['stock_check'] = $this->request->post['stock_check'];
-		} elseif (isset($store_info)) {
-			$this->data['stock_check'] = $store_info['stock_check'];		
-		} else {
-			$this->data['stock_check'] = '';
-		}
 
 		if (isset($this->request->post['stock_checkout'])) {
 			$this->data['stock_checkout'] = $this->request->post['stock_checkout'];
@@ -447,14 +440,6 @@ class ControllerSettingStore extends Controller {
 			$this->data['stock_checkout'] = $store_info['stock_checkout'];		
 		} else {
 			$this->data['stock_checkout'] = '';
-		}
-
-		if (isset($this->request->post['stock_subtract'])) {
-			$this->data['stock_subtract'] = $this->request->post['stock_subtract'];
-		} elseif (isset($store_info)) {
-			$this->data['stock_subtract'] = $store_info['stock_subtract'];		
-		} else {
-			$this->data['stock_subtract'] = '';
 		}
 		
 		if (isset($this->request->post['catalog_limit'])) {

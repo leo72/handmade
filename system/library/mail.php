@@ -16,6 +16,7 @@ final class Mail {
 	public $newline = "\n";
 	public $crlf = "\r\n";
 	public $verp = FALSE;
+	public $parameter = '';
 	
 	public function setTo($to) {
 		$this->to = $to;
@@ -92,7 +93,8 @@ final class Mail {
 			$header .= 'Subject: ' . $this->subject . $this->newline;
 		}
 	
-		$header .= 'From: ' . $this->sender . '<' . $this->from . '>' . $this->newline;
+		//$header .= 'From: ' . $this->sender . '<' . $this->from . '>' . $this->newline;
+		$header .= 'From: "' . $this->sender . '" <' . $this->from . '>' . $this->newline;
 		$header .= 'Reply-To: ' . $this->sender . '<' . $this->from . '>' . $this->newline;   
 		$header .= 'Return-Path: ' . $this->from . $this->newline;
 		$header .= 'X-Mailer: PHP/' . phpversion() . $this->newline; 
@@ -145,7 +147,12 @@ final class Mail {
 		if ($this->protocol == 'mail') {
 			ini_set('sendmail_from', $this->from);
 	
-			mail($to, $this->subject, $message, $header); 
+			if ($this->parameter) {
+				mail($to, $this->subject, $message, $header, $this->parameter);
+			} else {
+				mail($to, $this->subject, $message, $header);
+			}
+			
 		} elseif ($this->protocol == 'smtp') {
 			$handle = fsockopen($this->hostname, $this->port, $errno, $errstr, $this->timeout);   
 	

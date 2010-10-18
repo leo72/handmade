@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------
 
 // Text
-$_['text_title'] = 'Credit Card / Debit Card (Paymate)';
+$_['text_title'] = 'Кредитная карта / Дебетовая карта (Paymate)';
 
 $_['text_unable'] = 'Unable to locate or update your order status';
 $_['text_declined'] = 'Payment was declined by Paymate';

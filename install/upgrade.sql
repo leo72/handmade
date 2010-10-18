@@ -70,6 +70,7 @@ ALTER TABLE oc_product_special ALTER price SET DEFAULT 0.0000;
 ALTER TABLE oc_product_special ALTER date_start SET DEFAULT '0000-00-00';
 ALTER TABLE oc_product_special ALTER date_end SET DEFAULT '0000-00-00';
 
+INSERT INTO `oc_setting` (`setting_id` ,`group` ,`key` ,`value`) VALUES (NULL , 'config', 'config_error_filename', 'error.log') ON DUPLICATE KEY UPDATE setting_id=setting_id;
 
 #
 # DDL END
@@ -293,6 +294,8 @@ CREATE TABLE `oc_weight_class` (
 
 INSERT INTO `oc_weight_class` (`weight_class_id`, `value`) VALUES (1, '1.00000000') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
 INSERT INTO `oc_weight_class` (`weight_class_id`, `value`) VALUES (2, '1000.00000000') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
+INSERT INTO `oc_weight_class` (`weight_class_id`, `value`) VALUES (3, '2.20460000') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
+INSERT INTO `oc_weight_class` (`weight_class_id`, `value`) VALUES (4, '35.27400000') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
 INSERT INTO `oc_weight_class` (`weight_class_id`, `value`) VALUES (5, '2.20460000') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
 INSERT INTO `oc_weight_class` (`weight_class_id`, `value`) VALUES (6, '35.27400000') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
 
@@ -313,6 +316,8 @@ CREATE TABLE IF NOT EXISTS oc_weight_class_description (
 
 INSERT INTO `oc_weight_class_description` (`weight_class_id`, `language_id`, `title`, `unit`) VALUES (1, 1, 'Kilogram', 'kg') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
 INSERT INTO `oc_weight_class_description` (`weight_class_id`, `language_id`, `title`, `unit`) VALUES (2, 1, 'Gram', 'g') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
+INSERT INTO `oc_weight_class_description` (`weight_class_id`, `language_id`, `title`, `unit`) VALUES (3, 1, 'Pounds ', 'lbs') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
+INSERT INTO `oc_weight_class_description` (`weight_class_id`, `language_id`, `title`, `unit`) VALUES (4, 1, 'Ounces', 'ozs') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
 INSERT INTO `oc_weight_class_description` (`weight_class_id`, `language_id`, `title`, `unit`) VALUES (5, 1, 'Pound ', 'lb') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
 INSERT INTO `oc_weight_class_description` (`weight_class_id`, `language_id`, `title`, `unit`) VALUES (6, 1, 'Ounce', 'oz') ON DUPLICATE KEY UPDATE weight_class_id=weight_class_id;
 
@@ -504,9 +509,15 @@ ALTER TABLE oc_store DROP stock_status_id;
 
 ### Start 1.4.6
 
-INSERT INTO `oc_setting` (`setting_id` ,`group` ,`key` ,`value`) VALUES (NULL , 'config', 'config_admin_language', 'en') ON DUPLICATE KEY UPDATE setting_id=setting_id;
 
 ### Start 1.4.7
+
+SET @id=NULL;
+SET @dat='';
+SELECT @dat:=`value` FROM oc_setting WHERE `group` = 'config' and `key` = 'config_description_1';
+SELECT @id:=`setting_id` FROM oc_setting WHERE `group` = 'config' and `key` = 'config_description_1';
+SELECT @dat:=`value` FROM oc_setting WHERE `group` = 'config' and `key` = 'config_welcome_1';
+INSERT INTO `oc_setting` (`setting_id`, `group`, `key`, `value`) VALUES (@id, 'config', 'config_description_1', @dat) ON DUPLICATE KEY UPDATE setting_id=setting_id;
 
 ALTER TABLE `oc_country` ADD `status` INT( 1 ) NOT NULL DEFAULT '1';
 
@@ -535,3 +546,62 @@ INSERT INTO `oc_setting` (`setting_id`, `group`, `key`, `value`) VALUES (NULL, '
 
 ALTER TABLE `oc_store` ADD `catalog_limit` INT( 4 ) NOT NULL DEFAULT '12';
 ALTER TABLE `oc_store` ADD `cart_weight` INT( 1 ) NOT NULL;
+
+### Start 1.4.8
+
+# Update the default configs for compression and new review field
+INSERT INTO `oc_setting` (`setting_id` ,`group` ,`key` ,`value`) VALUES (NULL , 'config', 'config_compression', '0') ON DUPLICATE KEY UPDATE setting_id=setting_id;
+INSERT INTO `oc_setting` (`setting_id`, `group`, `key`, `value`) VALUES (NULL, 'config', 'config_review', '1') ON DUPLICATE KEY UPDATE setting_id=setting_id;
+
+# Remove existing entries for latest sidebox module so that it can replace the homepage latest
+DELETE FROM oc_setting WHERE `group` = 'latest';
+INSERT INTO `oc_setting` (`setting_id` ,`group` ,`key` ,`value`) VALUES (NULL, 'latest', 'latest_limit', '8') ON DUPLICATE KEY UPDATE setting_id=setting_id;
+INSERT INTO `oc_setting` (`setting_id` ,`group` ,`key` ,`value`) VALUES (NULL, 'latest', 'latest_position', 'home') ON DUPLICATE KEY UPDATE setting_id=setting_id;
+INSERT INTO `oc_setting` (`setting_id` ,`group` ,`key` ,`value`) VALUES (NULL, 'latest', 'latest_status', '1') ON DUPLICATE KEY UPDATE setting_id=setting_id;
+INSERT INTO `oc_setting` (`setting_id` ,`group` ,`key` ,`value`) VALUES (NULL, 'latest', 'latest_sort_order', '0') ON DUPLICATE KEY UPDATE setting_id=setting_id;
+DELETE FROM `oc_extension` WHERE `type` = 'module' AND `key` = 'latest';
+INSERT INTO `oc_extension` (`extension_id`, `type`, `key`) VALUES (NULL, 'module', 'latest') ON DUPLICATE KEY UPDATE extension_id=extension_id;
+
+# Add Meta Keywords
+ALTER TABLE `oc_category_description` MODIFY name varchar(255) NOT NULL COMMENT '' COLLATE utf8_bin;
+ALTER TABLE `oc_category_description` ADD `meta_keywords` varchar(255) NOT NULL COMMENT '' COLLATE utf8_bin;
+ALTER TABLE `oc_product_description` ADD `meta_keywords` varchar(255) NOT NULL COMMENT '' COLLATE utf8_bin;
+
+# Add additional fields to products for new features
+ALTER TABLE `oc_product` ADD `cost` DECIMAL(15,4) NOT NULL DEFAULT '0.0000' COMMENT '';
+ALTER TABLE `oc_product` ADD `sort_order` int(11) NOT NULL DEFAULT '0' COMMENT '';
+ALTER TABLE `oc_product` ADD `minimum` int(11) NOT NULL DEFAULT '1' COMMENT '';
+ALTER TABLE `oc_product` ADD `subtract` int(1) NOT NULL DEFAULT '1' COMMENT '';
+ALTER TABLE `oc_order_product` ADD `subtract` int(1) NOT NULL DEFAULT '0' COMMENT '';
+
+# Stock subtract is at product level now so no need at store level.
+ALTER TABLE `oc_store` DROP stock_subtract;
+
+### Start 1.4.9
+ALTER TABLE oc_order_product DROP subtract;
+
+UPDATE `oc_setting` SET `value` = '0' WHERE `key` = 'pp_standard_status';
+
+DELETE FROM `oc_zone` WHERE `code` = 'ANT';
+DELETE FROM `oc_zone` WHERE `code` = 'ARM';
+DELETE FROM `oc_zone` WHERE `code` = 'DOW';
+DELETE FROM `oc_zone` WHERE `code` = 'FER';
+DELETE FROM `oc_zone` WHERE `code` = 'LDY';
+DELETE FROM `oc_zone` WHERE `code` = 'TYR';
+
+INSERT INTO `oc_zone` (`zone_id`, `country_id`, `code`, `name`, `status`) VALUES (NULL, 222, 'ANT', 'County Antrim', 1) ON DUPLICATE KEY UPDATE zone_id=zone_id;
+INSERT INTO `oc_zone` (`zone_id`, `country_id`, `code`, `name`, `status`) VALUES (NULL, 222, 'ARM', 'County Armagh', 1) ON DUPLICATE KEY UPDATE zone_id=zone_id;
+INSERT INTO `oc_zone` (`zone_id`, `country_id`, `code`, `name`, `status`) VALUES (NULL, 222, 'DOW', 'County Down', 1) ON DUPLICATE KEY UPDATE zone_id=zone_id;
+INSERT INTO `oc_zone` (`zone_id`, `country_id`, `code`, `name`, `status`) VALUES (NULL, 222, 'FER', 'County Fermanagh', 1) ON DUPLICATE KEY UPDATE zone_id=zone_id;
+INSERT INTO `oc_zone` (`zone_id`, `country_id`, `code`, `name`, `status`) VALUES (NULL, 222, 'LDY', 'County Londonderry', 1) ON DUPLICATE KEY UPDATE zone_id=zone_id;
+INSERT INTO `oc_zone` (`zone_id`, `country_id`, `code`, `name`, `status`) VALUES (NULL, 222, 'TYR', 'County Tyrone', 1) ON DUPLICATE KEY UPDATE zone_id=zone_id;
+
+ALTER TABLE `oc_product_special` ADD INDEX ( `product_id` ) ;
+ALTER TABLE `oc_product_discount` ADD INDEX ( `product_id` ) ;
+ALTER TABLE `oc_product_related` ADD INDEX ( `product_id` ) ;
+ALTER TABLE `oc_review` ADD INDEX ( `product_id` ) ;
+
+ALTER TABLE `oc_country` ADD `postcode_required` int(1) NOT NULL DEFAULT '1' ;
+UPDATE `oc_country` SET `postcode_required` = 0 WHERE iso_code_3 = 'IRL';
+UPDATE `oc_country` SET `postcode_required` = 0 WHERE iso_code_3 = 'HKG';
+UPDATE `oc_country` SET `postcode_required` = 0 WHERE iso_code_3 = 'PAN';

@@ -20,6 +20,12 @@ class ControllerAccountCreate extends Controller {
 
 			$this->customer->login($this->request->post['email'], $this->request->post['password']);
 			
+			$this->load->model('account/address');
+
+            $address = $this->model_account_address->getAddress($this->customer->getAddressId());
+
+			$this->tax->setZone($address['country_id'], $address['zone_id']);
+			
 			$this->language->load('mail/account_create');
 			
 			$subject = sprintf($this->language->get('text_subject'), $this->config->get('config_name'));
@@ -39,6 +45,7 @@ class ControllerAccountCreate extends Controller {
 			
 			$mail = new Mail();
 			$mail->protocol = $this->config->get('config_mail_protocol');
+			$mail->parameter = $this->config->get('config_mail_parameter');
 			$mail->hostname = $this->config->get('config_smtp_host');
 			$mail->username = $this->config->get('config_smtp_username');
 			$mail->password = $this->config->get('config_smtp_password');
@@ -63,13 +70,13 @@ class ControllerAccountCreate extends Controller {
       	); 
 
       	$this->document->breadcrumbs[] = array(
-        	'href'      => HTTP_SERVER . 'index.php?route=account/account',
+        	'href'      => HTTPS_SERVER . 'index.php?route=account/account',
         	'text'      => $this->language->get('text_account'),
         	'separator' => $this->language->get('text_separator')
       	);
 		
       	$this->document->breadcrumbs[] = array(
-        	'href'      => HTTP_SERVER . 'index.php?route=account/create',
+        	'href'      => HTTPS_SERVER . 'index.php?route=account/create',
         	'text'      => $this->language->get('text_create'),
         	'separator' => $this->language->get('text_separator')
       	);
@@ -155,6 +162,12 @@ class ControllerAccountCreate extends Controller {
 			$this->data['error_city'] = $this->error['city'];
 		} else {
 			$this->data['error_city'] = '';
+		}
+		
+		if (isset($this->error['postcode'])) {
+			$this->data['error_postcode'] = $this->error['postcode'];
+		} else {
+			$this->data['error_postcode'] = '';
 		}
 
 		if (isset($this->error['country'])) {
@@ -292,10 +305,10 @@ class ControllerAccountCreate extends Controller {
 		}
 		
 		$this->children = array(
-			'common/header',
+			'common/column_right',
 			'common/footer',
 			'common/column_left',
-			'common/column_right'
+			'common/header'
 		);
 
 		$this->response->setOutput($this->render(TRUE), $this->config->get('config_compression'));	
@@ -310,7 +323,7 @@ class ControllerAccountCreate extends Controller {
       		$this->error['lastname'] = $this->language->get('error_lastname');
     	}
 
-		$pattern = '/^[A-Z0-9._%-]+@[A-Z0-9][A-Z0-9.-]{0,61}[A-Z0-9]\.[A-Z]{2,6}$/i';
+		$pattern = '/^[A-Z0-9._%-+]+@[A-Z0-9][A-Z0-9.-]{0,61}[A-Z0-9]\.[A-Z]{2,6}$/i';
 
     	if ((strlen(utf8_decode($this->request->post['email'])) > 96) || (!preg_match($pattern, $this->request->post['email']))) {
       		$this->error['email'] = $this->language->get('error_email');
@@ -331,7 +344,17 @@ class ControllerAccountCreate extends Controller {
     	if ((strlen(utf8_decode($this->request->post['city'])) < 3) || (strlen(utf8_decode($this->request->post['city'])) > 128)) {
       		$this->error['city'] = $this->language->get('error_city');
     	}
-
+		
+		$this->load->model('localisation/country');
+		
+		$country_info = $this->model_localisation_country->getCountry($this->request->post['country_id']);
+		
+		if ($country_info && $country_info['postcode_required']) {
+			if ((strlen(utf8_decode($this->request->post['postcode'])) < 2) || (strlen(utf8_decode($this->request->post['postcode'])) > 10)) {
+				$this->error['postcode'] = $this->language->get('error_postcode');
+			}
+		}
+			
     	if ($this->request->post['country_id'] == 'FALSE') {
       		$this->error['country'] = $this->language->get('error_country');
     	}
@@ -393,6 +416,25 @@ class ControllerAccountCreate extends Controller {
 		}
 	
 		$this->response->setOutput($output, $this->config->get('config_compression'));
-  	}  
+  	}
+	
+	public function postcode() {
+
+  		$this->language->load('account/create');
+
+  		$this->load->model('localisation/country');
+
+    	$result = $this->model_localisation_country->getCountry($this->request->get['country_id']);
+
+		$output = '';
+
+      	if ($result['postcode_required']) {
+        	$output = '<span class="required">*</span> ' . $this->language->get('entry_postcode');
+		} else {
+			$output = $this->language->get('entry_postcode');
+		}
+
+		$this->response->setOutput($output, $this->config->get('config_compression'));
+	}
 }
 ?>

@@ -11,15 +11,19 @@ $_['text_shipping_methods'] = 'Пожалуйста, выберите спосо
 $_['text_payment_method']   = 'Способ оплаты';
 $_['text_payment_methods']  = 'Пожалуйста, выберите способ оплаты.';
 $_['text_comments']         = 'Ваши комментарии';
-$_['text_agree']            = 'Я прочитал <a onclick="window.open(\'%s\');"><b>%s</b></a> и согласен с ними';
+$_['text_agree']            = 'Я прочитал <a class="thickbox" href="index.php?route=information/information/loadInfo&checkout=1" alt="%s"><b>%s</b></a> и согласен с ними';
+$_['text_coupon']           = 'Введите код, нажмите кнопку "Применить купон".';
+$_['text_success']          = 'Купон со скидкой применён!';
 
 // Entry
 $_['entry_shipping']        = 'Способ доставки:';
 $_['entry_payment']         = 'Способ оплаты:';
+$_['entry_coupon']          = 'Купон:';
 
 // Error
 $_['error_shipping']        = 'Способ доставки не выбран!';
 $_['error_no_shipping']     = 'Нет доступных способов доставки. Пожалуйста, <a href="index.php?route=information/contact">свяжитесь с нами</a> для устранения проблемы!';
 $_['error_payment']         = 'Способ оплаты не выбран!';
 $_['error_agree']           = 'Вы должны согласиться с правилами %s!';
+$_['error_coupon']          = 'Купон неверен, просрочен или достигнут его лимит использования!';
 ?>

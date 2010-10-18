@@ -38,7 +38,7 @@ class ControllerUserUser extends Controller {
 				$url .= '&order=' . $this->request->get['order'];
 			}
 			
-			$this->redirect(HTTPS_SERVER . 'index.php?route=user/user' . $url);
+			$this->redirect(HTTPS_SERVER . 'index.php?route=user/user&token=' . $this->session->data['token'] . $url);
     	}
 	
     	$this->getForm();
@@ -70,7 +70,7 @@ class ControllerUserUser extends Controller {
 				$url .= '&order=' . $this->request->get['order'];
 			}
 			
-			$this->redirect(HTTPS_SERVER . 'index.php?route=user/user' . $url);
+			$this->redirect(HTTPS_SERVER . 'index.php?route=user/user&token=' . $this->session->data['token'] . $url);
     	}
 	
     	$this->getForm();
@@ -104,7 +104,7 @@ class ControllerUserUser extends Controller {
 				$url .= '&order=' . $this->request->get['order'];
 			}
 			
-			$this->redirect(HTTPS_SERVER . 'index.php?route=user/user' . $url);
+			$this->redirect(HTTPS_SERVER . 'index.php?route=user/user&token=' . $this->session->data['token'] . $url);
     	}
 	
     	$this->getList();
@@ -146,19 +146,19 @@ class ControllerUserUser extends Controller {
   		$this->document->breadcrumbs = array();
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=common/home',
+       		'href'      => HTTPS_SERVER . 'index.php?route=common/home&token=' . $this->session->data['token'],
        		'text'      => $this->language->get('text_home'),
       		'separator' => FALSE
    		);
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=user/user' . $url,
+       		'href'      => HTTPS_SERVER . 'index.php?route=user/user&token=' . $this->session->data['token'] . $url,
        		'text'      => $this->language->get('heading_title'),
       		'separator' => ' :: '
    		);
 			
-		$this->data['insert'] = HTTPS_SERVER . 'index.php?route=user/user/insert' . $url;
-		$this->data['delete'] = HTTPS_SERVER . 'index.php?route=user/user/delete' . $url;			
+		$this->data['insert'] = HTTPS_SERVER . 'index.php?route=user/user/insert&token=' . $this->session->data['token'] . $url;
+		$this->data['delete'] = HTTPS_SERVER . 'index.php?route=user/user/delete&token=' . $this->session->data['token'] . $url;			
 			
     	$this->data['users'] = array();
 
@@ -178,7 +178,7 @@ class ControllerUserUser extends Controller {
 			
 			$action[] = array(
 				'text' => $this->language->get('text_edit'),
-				'href' => HTTPS_SERVER . 'index.php?route=user/user/update&user_id=' . $result['user_id'] . $url
+				'href' => HTTPS_SERVER . 'index.php?route=user/user/update&token=' . $this->session->data['token'] . '&user_id=' . $result['user_id'] . $url
 			);
 					
       		$this->data['users'][] = array(
@@ -220,18 +220,18 @@ class ControllerUserUser extends Controller {
 		$url = '';
 
 		if ($order == 'ASC') {
-			$url .= '&order=' .  'DESC';
+			$url .= '&order=DESC';
 		} else {
-			$url .= '&order=' .  'ASC';
+			$url .= '&order=ASC';
 		}
 
 		if (isset($this->request->get['page'])) {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 					
-		$this->data['sort_username'] = HTTPS_SERVER . 'index.php?route=user/user&sort=username' . $url;
-		$this->data['sort_status'] = HTTPS_SERVER . 'index.php?route=user/user&sort=status' . $url;
-		$this->data['sort_date_added'] = HTTPS_SERVER . 'index.php?route=user/user&sort=date_added' . $url;
+		$this->data['sort_username'] = HTTPS_SERVER . 'index.php?route=user/user&token=' . $this->session->data['token'] . '&sort=username' . $url;
+		$this->data['sort_status'] = HTTPS_SERVER . 'index.php?route=user/user&token=' . $this->session->data['token'] . '&sort=status' . $url;
+		$this->data['sort_date_added'] = HTTPS_SERVER . 'index.php?route=user/user&token=' . $this->session->data['token'] . '&sort=date_added' . $url;
 		
 		$url = '';
 
@@ -248,7 +248,7 @@ class ControllerUserUser extends Controller {
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_admin_limit');
 		$pagination->text = $this->language->get('text_pagination');
-		$pagination->url = HTTPS_SERVER . 'index.php?route=user/user' . $url . '&page={page}';
+		$pagination->url = HTTPS_SERVER . 'index.php?route=user/user&token=' . $this->session->data['token'] . $url . '&page={page}';
 			
 		$this->data['pagination'] = $pagination->render();
 								
@@ -278,6 +278,7 @@ class ControllerUserUser extends Controller {
     	$this->data['entry_email'] = $this->language->get('entry_email');
     	$this->data['entry_user_group'] = $this->language->get('entry_user_group');
 		$this->data['entry_status'] = $this->language->get('entry_status');
+		$this->data['entry_captcha'] = $this->language->get('entry_captcha');
 
     	$this->data['button_save'] = $this->language->get('button_save');
     	$this->data['button_cancel'] = $this->language->get('button_cancel');
@@ -318,7 +319,7 @@ class ControllerUserUser extends Controller {
 			$this->data['error_lastname'] = $this->error['lastname'];
 		} else {
 			$this->data['error_lastname'] = '';
-		}		
+		}
 		
 		$url = '';
 			
@@ -337,24 +338,24 @@ class ControllerUserUser extends Controller {
   		$this->document->breadcrumbs = array();
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=common/home',
+       		'href'      => HTTPS_SERVER . 'index.php?route=common/home&token=' . $this->session->data['token'],
        		'text'      => $this->language->get('text_home'),
       		'separator' => FALSE
    		);
 
    		$this->document->breadcrumbs[] = array(
-       		'href'      => HTTPS_SERVER . 'index.php?route=user/user' . $url,
+       		'href'      => HTTPS_SERVER . 'index.php?route=user/user&token=' . $this->session->data['token'] . $url,
        		'text'      => $this->language->get('heading_title'),
       		'separator' => ' :: '
    		);
 		
 		if (!isset($this->request->get['user_id'])) {
-			$this->data['action'] = HTTPS_SERVER . 'index.php?route=user/user/insert' . $url;
+			$this->data['action'] = HTTPS_SERVER . 'index.php?route=user/user/insert&token=' . $this->session->data['token'] . $url;
 		} else {
-			$this->data['action'] = HTTPS_SERVER . 'index.php?route=user/user/update&user_id=' . $this->request->get['user_id'] . $url;
+			$this->data['action'] = HTTPS_SERVER . 'index.php?route=user/user/update&token=' . $this->session->data['token'] . '&user_id=' . $this->request->get['user_id'] . $url;
 		}
 		  
-    	$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=user/user' . $url;
+    	$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=user/user&token=' . $this->session->data['token'] . $url;
 
     	if (isset($this->request->get['user_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
       		$user_info = $this->model_user_user->getUser($this->request->get['user_id']);
@@ -423,7 +424,7 @@ class ControllerUserUser extends Controller {
 		} else {
       		$this->data['status'] = 0;
     	}
-		
+				
 		$this->template = 'user/user_form.tpl';
 		$this->children = array(
 			'common/header',	
@@ -432,7 +433,7 @@ class ControllerUserUser extends Controller {
 		
 		$this->response->setOutput($this->render(TRUE), $this->config->get('config_compression'));	
   	}
-
+  	
   	private function validateForm() {
     	if (!$this->user->hasPermission('modify', 'user/user')) {
       		$this->error['warning'] = $this->language->get('error_permission');

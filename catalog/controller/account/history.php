@@ -20,13 +20,13 @@ class ControllerAccountHistory extends Controller {
       	); 
 
       	$this->document->breadcrumbs[] = array(
-        	'href'      => HTTP_SERVER . 'index.php?route=account/account',
+        	'href'      => HTTPS_SERVER . 'index.php?route=account/account',
         	'text'      => $this->language->get('text_account'),
         	'separator' => $this->language->get('text_separator')
       	);
 		
       	$this->document->breadcrumbs[] = array(
-        	'href'      => HTTP_SERVER . 'index.php?route=account/history',
+        	'href'      => HTTPS_SERVER . 'index.php?route=account/history',
         	'text'      => $this->language->get('text_history'),
         	'separator' => $this->language->get('text_separator')
       	);
@@ -79,7 +79,7 @@ class ControllerAccountHistory extends Controller {
 			$pagination->page = $page;
 			$pagination->limit = $this->config->get('config_catalog_limit');
 			$pagination->text = $this->language->get('text_pagination');
-			$pagination->url = HTTP_SERVER . 'index.php?route=account/history&page=%s';
+			$pagination->url = HTTP_SERVER . 'index.php?route=account/history&page={page}';
 			
 			$this->data['pagination'] = $pagination->render();
 
@@ -92,10 +92,10 @@ class ControllerAccountHistory extends Controller {
 			}
 			
 			$this->children = array(
-				'common/header',
+				'common/column_right',
 				'common/footer',
 				'common/column_left',
-				'common/column_right'
+				'common/header'
 			);	
 			
 			$this->response->setOutput($this->render(TRUE), $this->config->get('config_compression'));				
@@ -115,10 +115,10 @@ class ControllerAccountHistory extends Controller {
 			}
 			
 			$this->children = array(
-				'common/header',
+				'common/column_right',
 				'common/footer',
 				'common/column_left',
-				'common/column_right'
+				'common/header'
 			);
 					
 			$this->response->setOutput($this->render(TRUE), $this->config->get('config_compression'));				

@@ -1,11 +1,11 @@
 <?php   
 class ControllerCommonHeader extends Controller {
 	protected function index() {
-    	if (isset($this->request->get['language_code'])) {
-			$this->session->data['language'] = $this->request->get['language_code'];
-			
-			if (isset($this->request->get['redirect'])) {
-				$this->redirect($this->request->get['redirect']);
+    	if (($this->request->server['REQUEST_METHOD'] == 'POST') && isset($this->request->post['language_code'])) {
+			$this->session->data['language'] = $this->request->post['language_code'];
+		
+			if (isset($this->request->post['redirect'])) {
+				$this->redirect($this->request->post['redirect']);
 			} else {
 				$this->redirect(HTTP_SERVER . 'index.php?route=common/home');
 			}
@@ -33,8 +33,11 @@ class ControllerCommonHeader extends Controller {
 		}
 			
 		$this->data['title'] = $this->document->title;
+		$this->data['keywords'] = $this->document->keywords;
 		$this->data['description'] = $this->document->description;
-
+		$this->data['template'] = $this->config->get('config_template');
+		
+		
 		if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
 			$this->data['base'] = HTTPS_SERVER;
 		} else {

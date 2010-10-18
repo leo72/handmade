@@ -4,6 +4,7 @@ $_['heading_title']         = 'Orders';
 
 // Text
 $_['text_success']          = 'Success: You have modified orders!';
+$_['text_success_address']  = 'Success: You have modified order address!';
 $_['text_invoice']          = 'Invoice';
 $_['text_order_id']         = 'Order ID:';
 $_['text_invoice_id']       = 'Invoice No.:';
@@ -31,8 +32,9 @@ $_['column_remaining']      = 'Remaining';
 $_['column_notify']         = 'Customer Notified';
 $_['column_comment']        = 'Comment';
 $_['column_action']         = 'Action';
+$_['column_add_product']    = 'Add Product(s)';
 
-// Entry 
+// Entry
 $_['entry_order_id']        = 'Order ID:';
 $_['entry_invoice_id']      = 'Invoice ID:';
 $_['entry_customer']        = 'Customer:';
@@ -59,7 +61,16 @@ $_['entry_zone']            = 'Region / State:';
 $_['entry_zone_code']       = 'Region / State Code:';
 $_['entry_country']         = 'Country:';
 $_['entry_status']          = 'Order Status:';
+$_['entry_append']          = 'Append Comments:';
 $_['entry_notify']          = 'Notify Customer:';
+$_['entry_category'] 		= 'Choose Category:';
+$_['entry_product']  		= 'Choose Product:';
+$_['entry_option']   		= 'Choose Option(s):';
+$_['entry_quantity']   		= 'Qty:';
+$_['entry_tax']   			= 'Tax:';
+
+// Button
+$_['button_update_address'] = 'Update Address';
 
 // Error
 $_['error_permission']      = 'Warning: You do not have permission to modify orders!';
